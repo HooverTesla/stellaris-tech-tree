@@ -1,32 +1,49 @@
-name: Publish Website
+name: Start Tech Tree
 
 on:
   push:
     branches:
       - LIVE
   workflow_dispatch:
+
 jobs:
-  Build-Artifact-Action:
-    name: Build-Artifact-Action
+  Deploy-Tech-Tree:
+    name: Deploy-Tech-Tree
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
-      - run: npm install
-      - run: npm run minify-css
-      - name: Upload the artifact
+      - name: Upload TechTreeAssets
         uses: actions/upload-artifact@v4
         with:
-          name: wpcom
+          name: StellarTechTree
           path: |
-            .
-            !style.css 
+            index.html
+            assets/
+            andromeda-3.12.2
+            cepheus-3.4.3
+            dick-3.0.1
+            herbert-3.2.2
+            jobs
+            lenguin-2.2.0
+            leguin-2.2.3
+            leguin-2.2.4
+            leguin-2.2.7
+            lem-3.1.1
+            orion-3.6.0
+            shelley-2.5.0
+            vanilla
+            verne-2.6.0
+            wells.2.7.1
+            wolfe-2.3.0
+            wolfe.2.3.3
+            favicon.ico
+            LICENCE
+            stellaris-tech-tree.iml
             !node_modules
-            !README.md
-            !package.json
-            !package-lock.json
             !.git
             !.gitignore
+            !.idea
