@@ -19,7 +19,7 @@ jobs:
       - name: Upload TechTreeAssets
         uses: actions/upload-artifact@v4
         with:
-          name: StellarTechTree
+          name: wpcom
           path: |
             index.html
             assets/
