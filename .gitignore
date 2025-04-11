@@ -4,3 +4,4 @@
 _site
 icons_convert
 .code-workspace
+*.code-workspace
