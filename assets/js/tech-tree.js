@@ -93,12 +93,17 @@ function setup(tech) {
 };
 
 function setup_search() {
-    const trees = document.querySelector('#tech-tree').querySelectorAll('.Treant');
+    const trees = document.querySelector('#tech-tree').querySelectorAll("[id|='tech-tree']");
 
-    let nodes = Array.from(trees).reduce((a, b) => { a.push(...b.querySelectorAll('.node.tech')); return a; }, []);
+    let nodes = Array.from(trees).filter((t) => {
+        return t.getAttribute("class") == null || !t.getAttribute("class").includes("float-NoDisplay");
+    }).reduce((a, b) => { a.push(...b.querySelectorAll('.node.tech')); return a; }, []);
     nodes = nodes.reduce((a, b) =>  {
         let the_text = '';
-        b.querySelectorAll('.node-name, .extra-data .tooltip-content:not(.prerequisites)').forEach(data => the_text += data.innerText);
+        b.querySelectorAll('.node-name, .extra-data .tooltip-content:not(.prerequisites)').forEach(data => {
+            the_text += data.innerText;
+            the_text += data.title;
+        });
         a.push({ node: b, text: the_text });
         return a;
     }, []);
@@ -113,17 +118,90 @@ function setup_search() {
         };
     };
 
+    let current_idx = 0;
+    current_idx = 0;
+    let last_search_term = "";
     $("#deepsearch").on("change keyup paste", debounce(function () {
         const search_term = $('#deepsearch').val();
+        if (search_term == last_search_term) {
+            return;
+        } else {
+            last_search_term = search_term;
+        }
+
+        current_idx = 0;
         if (!search_term) {
             nodes.forEach(n => n.node.style.opacity = 1);
             return;
         }
-        nodes.forEach(n => {
+        
+        let hits = nodes.filter(n => {
             const match = n.text.toLowerCase().includes(search_term.toLowerCase());
-            n.node.style.opacity = match ? 1 : 0.1;
+            
+            n.node.style.opacity = match ? 0.6 : 0.1;
+
+            return match;
+        });
+
+        console.log(hits.length);
+
+
+        hits.sort((a, b) => {
+            return a.node.getBoundingClientRect().top - b.node.getBoundingClientRect().top || a.node.getBoundingClientRect().left - b.node.getBoundingClientRect().left;
+        });
+
+        let first_hit = true;
+
+        hits.forEach(n => {
+            if (first_hit) {
+                first_hit = false;
+                console.log(n.node);
+                n.node.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                    inline: "nearest",
+                  });
+                n.node.style.opacity = 1;
+            } else {
+                n.node.style.opacity = 0.6;
+            }
         })
+
     }, 300));
+
+    $("#deepsearch").on('keypress',function(e) {
+        if(e.which == 13) {
+            const search_term = $('#deepsearch').val();
+
+            let hits = nodes.filter(n => {
+                const match = n.text.toLowerCase().includes(search_term.toLowerCase());
+                
+                n.node.style.opacity = match ? 0.6 : 0.1;
+    
+                return match;
+            });
+    
+    
+            hits.sort((a, b) => {
+                return a.node.getBoundingClientRect().top - b.node.getBoundingClientRect().top || a.node.getBoundingClientRect().left - b.node.getBoundingClientRect().left;
+            });
+
+            if (hits.length == 0) {
+                return; 
+            }
+
+            hits[current_idx % hits.length].node.style.opacity = 0.6;
+            let current_focused = hits[(current_idx + 1) % hits.length].node;
+            current_focused.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+                inline: "nearest",
+              });
+            current_focused.style.opacity = 1;
+
+            current_idx += 1;
+        }
+    });
 };
 
 

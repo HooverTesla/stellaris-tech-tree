@@ -52,6 +52,7 @@ $(document).ready(function(){
             $("#tech-tree-engineering").addClass("float-NoDisplay");
             $("#tech-tree-anomalies").removeClass("float-NoDisplay");
         }
+        setup_search();
     });
 
     // Make some button go to the top of the page
