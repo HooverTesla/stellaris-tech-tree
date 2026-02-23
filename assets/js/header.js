@@ -19,6 +19,7 @@ $(document).ready(function(){
         
         if($(this).parent().hasClass("float-Physics"))
         {
+            $("#tech-tree-search").addClass("float-NoDisplay");
             $("#tech-tree-physics").removeClass("float-NoDisplay");
             $("#tech-tree-society").addClass("float-NoDisplay");
             $("#tech-tree-engineering").addClass("float-NoDisplay");
@@ -26,6 +27,7 @@ $(document).ready(function(){
         }
         if($(this).parent().hasClass("float-Society"))
         {
+            $("#tech-tree-search").addClass("float-NoDisplay");
             $("#tech-tree-physics").addClass("float-NoDisplay");
             $("#tech-tree-society").removeClass("float-NoDisplay");
             $("#tech-tree-engineering").addClass("float-NoDisplay");
@@ -33,6 +35,7 @@ $(document).ready(function(){
         }
         if($(this).parent().hasClass("float-Engineering"))
         {
+            $("#tech-tree-search").addClass("float-NoDisplay");
             $("#tech-tree-physics").addClass("float-NoDisplay");
             $("#tech-tree-society").addClass("float-NoDisplay");
             $("#tech-tree-engineering").removeClass("float-NoDisplay");
@@ -40,6 +43,7 @@ $(document).ready(function(){
         }
         if($(this).parent().hasClass("float-All"))
         {
+            $("#tech-tree-search").addClass("float-NoDisplay");
             $("#tech-tree-physics").removeClass("float-NoDisplay");
             $("#tech-tree-society").removeClass("float-NoDisplay");
             $("#tech-tree-engineering").removeClass("float-NoDisplay");
@@ -47,10 +51,19 @@ $(document).ready(function(){
         }
         if($(this).parent().hasClass("float-Anomalies"))
         {
+            $("#tech-tree-search").addClass("float-NoDisplay");
             $("#tech-tree-physics").addClass("float-NoDisplay");
             $("#tech-tree-society").addClass("float-NoDisplay");
             $("#tech-tree-engineering").addClass("float-NoDisplay");
             $("#tech-tree-anomalies").removeClass("float-NoDisplay");
+        }
+        if($(this).parent().hasClass("float-SearchTab"))
+        {
+            $("#tech-tree-search").removeClass("float-NoDisplay");
+            $("#tech-tree-physics").addClass("float-NoDisplay");
+            $("#tech-tree-society").addClass("float-NoDisplay");
+            $("#tech-tree-engineering").addClass("float-NoDisplay");
+            $("#tech-tree-anomalies").addClass("float-NoDisplay");
         }
         setup_search();
     });

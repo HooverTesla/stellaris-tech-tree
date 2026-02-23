@@ -126,17 +126,6 @@
     </script>
 
     <script>
-      $(document).ready(function(){
-        if (window.location.search) {
-          const page = window.routes.find(r => r.route === window.location.search.slice(1));
-          if (page) {
-            load_page(page.route, page.title);
-          }
-        }
-      });
-    </script>
-
-    <script>
       window.routes = [
           { name: 'Phoenix 4.0.10', route: 'phoenix-4.0.10', title: 'Stellaris 4.0.10 (Phoenix)', },
           { name: 'Circinus 3.14.1', route: 'circinus-3.14.1', title: 'Stellaris 3.14.1 (Circinus)', },
@@ -157,10 +146,62 @@
           { name: 'Stellaris 2.2.3', route: 'leguin-2.2.3',  title: 'Stellaris 2.2.3 (Leguin)', },
           { name: 'Stellaris 2.2.0', route: 'leguin-2.2.0',  title: 'Stellaris 2.2.0 (Leguin)', },
       ];
+      window.route_aliases = {
+        latest: 'phoenix-4.0.10'
+      };
+      window.default_route_alias = 'latest';
+
+      const route_by_name = (requested) => {
+        if (!requested) {
+          return null;
+        }
+
+        const normalized = String(requested).trim().toLowerCase();
+        if (!normalized) {
+          return null;
+        }
+
+        const mappedRoute = window.route_aliases[normalized] || normalized;
+        return window.routes.find(r => r.route.toLowerCase() === mappedRoute) || null;
+      };
+
+      const resolve_requested_route = () => {
+        const params = new URLSearchParams(window.location.search);
+        const fromQuery = params.get('version') || params.get('route') || params.get('v');
+        if (fromQuery) {
+          return fromQuery;
+        }
+
+        // Legacy format: ?phoenix-4.0.10
+        const legacy = window.location.search.startsWith('?') ? window.location.search.slice(1) : '';
+        if (legacy && !legacy.includes('=')) {
+          return legacy;
+        }
+
+        // External host app can set either variable before loading this page.
+        if (typeof window.STT_VERSION === 'string' && window.STT_VERSION.trim()) {
+          return window.STT_VERSION.trim();
+        }
+        if (typeof window.STELLARIS_TECH_TREE_VERSION === 'string' && window.STELLARIS_TECH_TREE_VERSION.trim()) {
+          return window.STELLARIS_TECH_TREE_VERSION.trim();
+        }
+
+        return window.default_route_alias;
+      };
+
       $(document).ready(function(){
-        routes.forEach(page => {
-          const ele = $(`<li><a>${page.name}</a></li>`);
-          ele.on("click", function() { load_page(page.route,page.title) });
+        const requestedRoute = resolve_requested_route();
+        const page = route_by_name(requestedRoute) || route_by_name(window.default_route_alias);
+
+        if (page) {
+          load_page(page.route, page.title);
+          return;
+        }
+
+        // Fallback UI if route resolution fails.
+        window.routes.forEach(route => {
+          const ele = $(`<li><a>${route.name}</a></li>`);
+          ele.on("click", function() { load_page(route.route, route.title); });
           $('#tech-pages').append(ele);
         });
       });
